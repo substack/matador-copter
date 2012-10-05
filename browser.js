@@ -1,6 +1,5 @@
 var shoe = require('shoe');
 var emitStream = require('emit-stream');
-var JSONStream = require('JSONStream');
 var MuxDemux = require('mux-demux');
 var dnode = require('dnode');
 
@@ -11,7 +10,7 @@ var control = require('./browser/control');
 var mdm = MuxDemux();
 mdm.on('connection', function (c) {
     if (c.meta === 'emit') {
-        var emitter = emitStream(c.pipe(JSONStream.parse([true])));
+        var emitter = emitStream(c);
         
         emitter.on('image', function (data) {
             img.setAttribute('src', 'data:image/png;base64,' + data);

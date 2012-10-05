@@ -12,7 +12,6 @@ var emitStream = require('emit-stream');
 
 var server = http.createServer(ecstatic(__dirname + '/static'));
 server.listen(8000);
-var JSONStream = require('JSONStream');
 
 var MuxDemux = require('mux-demux');
 var dnode = require('dnode');
@@ -35,8 +34,7 @@ var sock = shoe(function (stream) {
     d.pipe(mdm.createStream('dnode')).pipe(d);
     
     emitStream(emitter)
-        .pipe(JSONStreamf.stringify())
-        .pipe(mdm.createReadStream('emit'))
+        .pipe(mdm.createWriteStream('emit'))
     ;
 });
 sock.install(server, '/sock');
