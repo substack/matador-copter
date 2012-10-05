@@ -28,7 +28,7 @@ module.exports = function (client) {
     },
     shift_l:      function (n) { client.land(1 * n) },
 
-    f:            function (n) { if (n) client.animate('flipAhead') },
+    f:            function (n) { if (n) client.animate('flipLeft', 15) },
 
   }
 

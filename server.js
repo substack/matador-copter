@@ -71,9 +71,12 @@ png.on('data', function (buf) {
         
         console.log(Date.now());
         client.front(1);
+        client.animateLeds('fire', 5, 1000);
         
         setTimeout(function () {
             client.front(0);
+            client.animateLeds('standard', 1, 1000);
+            
             emitter.emit('unred');
             detected = false;
         }, 1000);
