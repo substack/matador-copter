@@ -12,7 +12,9 @@
     "shoe" : "*",
     "JSONStream" : "*",
     "emit-stream" : "*",
-    "ecstatic" : "*"
+    "ecstatic" : "*",
+    "mux-demux" : "*",
+    "dnode" : "*"
   },
   "bundleDependencies": ["keypress","canvas"],
   "devDependencies": {},

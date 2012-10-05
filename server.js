@@ -14,8 +14,30 @@ var server = http.createServer(ecstatic(__dirname + '/static'));
 server.listen(8000);
 var JSONStream = require('JSONStream');
 
+var MuxDemux = require('mux-demux');
+var dnode = require('dnode');
+var methods = [
+    'after', 'disableEmergency', 'takeoff', 'land', 'stop', 'animate',
+    'animateLeds', 'up', 'down', 'left', 'right', 'front', 'back',
+    'clockwise', 'counterClockwise',
+];
+
 var sock = shoe(function (stream) {
-    emitStream(emitter).pipe(JSONStream.stringify()).pipe(stream);
+    var mdm = MuxDemux();
+    mdm.pipe(stream).pipe(mdm);
+    
+    var d = dnode(methods.reduce(function (acc, key) {
+        acc[key] = client[key].bind(client);
+        return methods;
+    }, {
+        setRedMode : function (x) { redMode = x }
+    }));
+    d.pipe(mdm.createStream('dnode')).pipe(d);
+    
+    emitStream(emitter)
+        .pipe(JSONStreamf.stringify())
+        .pipe(mdm.createReadStream('emit'))
+    ;
 });
 sock.install(server, '/sock');
 
@@ -65,50 +87,6 @@ png.on('data', function (buf) {
             emitter.emit('unred');
         }, 5000);
     }
-});
-
-process.stdin.on('data', function (buf) {
-    if (buf[0] === 3) {
-        client.land();
-        setTimeout(function () {
-            process.exit();
-        }, 250);
-    }
-    
-    var s = String.fromCharCode(buf[0]);
-    if (s === 'h') {
-        client.counterClockwise(speed);
-        setTimeout(function () { client.counterClockwise(0) }, 250);
-    }
-    if (s === 'j') {
-        client.down(speed);
-        setTimeout(function () { client.down(0) }, 250);
-    }
-    if (s === 'k') {
-        client.up(speed);
-        setTimeout(function () { client.up(0) }, 250);
-    }
-    if (s === 'l') {
-        client.clockwise(speed);
-        setTimeout(function () { client.clockwise(0) }, 250);
-    }
-    
-    if (s === 'w') {
-        client.front(speed);
-        setTimeout(function () { client.front(0) }, 250);
-    }
-    if (s === 's') {
-        client.back(speed);
-        setTimeout(function () { client.back(0) }, 250);
-    }
-    
-    if (s === ' ') {
-        if (flying) client.land();
-        else client.takeoff();
-        flying = !flying;
-    }
-    if (s === 'x') client.stop();
-    if (s === 'r') redMode = !redMode;
 });
 
 process.stdin.setRawMode(true);
