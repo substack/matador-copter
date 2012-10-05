@@ -50,19 +50,22 @@ png.on('error', function (err) {
     console.error('caught error ' + err);
 });
 
-var last = 0;
+var last = { frame : 0, detect : 0 };
 var detected = false;
 
 png.on('data', function (buf) {
-    if (Date.now() - last < 1000) return;
-    last = Date.now();
+    if (Date.now() - last.frame >= 100) {
+        emitter.emit('image', buf.toString('base64'));
+        last.frame = Date.now();
+    }
     
-    emitter.emit('image', buf.toString('base64'));
+    if (Date.now() - last.detect < 1000) return;
+    last.detect = Date.now();
     
     if (!redMode) return;
     if (detected) return;
     
-    if (detect(640, 360, buf)) {
+    if (detect(640 / 2, 360 / 2, buf)) {
         detected = true;
         emitter.emit('red');
         

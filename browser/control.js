@@ -23,10 +23,12 @@ module.exports = function (client) {
     shift_down:   function (n) { ctrl.a(-1 * n) },
 
     shift_t:      function (n) {
-        client.takeoff(1 * n)
         client.disableEmergency()
+        client.takeoff(1 * n)
     },
     shift_l:      function (n) { client.land(1 * n) },
+
+    f:            function (n) { if (n) client.animate('flipAhead') },
 
   }
 
