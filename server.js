@@ -70,20 +70,10 @@ png.on('data', function (buf) {
         client.front(1);
         
         setTimeout(function () {
-            client.stop();
             client.front(0);
-            
-            client.clockwise(1);
-        }, 1000);
-        
-        setTimeout(function () {
-            client.clockwise(0);
-        }, 4000);
-        
-        setTimeout(function () {
-            detected = false;
             emitter.emit('unred');
-        }, 5000);
+            detected = false;
+        }, 1000);
     }
 });
 
